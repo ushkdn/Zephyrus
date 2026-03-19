@@ -1,0 +1,40 @@
+services:
+  logs.db:
+    image: postgres:latest
+    container_name: logs.db
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_DB: logs.db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - logs.db.data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: default@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - pgadmin.data:/var/lib/pgadmin/data
+    depends_on:
+      - logs.db
+
+  seq:
+    image: datalust/seq:2024
+    container_name: seq
+    ports:
+      - 5051:80
+    environment:
+      - ACCEPT_EULA=Y
+    volumes:
+      - seq.data:/var/lib/seq/data
+
+volumes:
+  logs.db.data:
+  pgadmin.data:
+  seq.data:
