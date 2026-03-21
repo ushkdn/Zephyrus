@@ -9,7 +9,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         var logger = SerilogFactory.CreateLogger(builder.Services, builder.Configuration);
-        
+
         var app = builder.Build();
 
         app.Run();

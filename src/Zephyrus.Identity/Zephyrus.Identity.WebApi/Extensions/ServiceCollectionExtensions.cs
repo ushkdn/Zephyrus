@@ -10,12 +10,10 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddLayers(this IServiceCollection services)
     {
         services.AddControllers().AddApplicationPart(typeof(IIdentityPresentationAssemblyMarker).Assembly);
-        
+
         return services
             .AddApplicationLayer()
             .AddInfrastructureLayer()
             .AddPresentationLayer();
     }
-    
-    
 }

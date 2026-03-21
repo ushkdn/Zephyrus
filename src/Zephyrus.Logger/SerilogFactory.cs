@@ -18,7 +18,7 @@ public static class SerilogFactory
             loggingBuilder.ClearProviders();
             loggingBuilder.AddSerilog(serilogLogger, true);
         });
-        
+
         return serilogLogger;
     }
 }
