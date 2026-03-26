@@ -6,6 +6,10 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddPresentationLayer(this IServiceCollection services)
     {
+        services
+            .AddControllers()
+            .AddApplicationPart(typeof(IIdentityPresentationAssemblyMarker).Assembly);
+
         return services;
     }
 }

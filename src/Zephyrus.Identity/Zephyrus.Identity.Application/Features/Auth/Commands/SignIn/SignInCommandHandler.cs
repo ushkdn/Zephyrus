@@ -10,13 +10,13 @@ public class SignInCommandHandler(
     IRefreshTokenRepository refreshTokenRepository,
     IPasswordHasher passwordHasher,
     IJwtService jwtService
-    ) : IRequestHandler<SignInCommandRequest, HandlerResponse<SignInCommandResponse>
+    ) : IRequestHandler<SignInCommandRequest, HandlerResponse<SignInCommandResponse>>
 {
     public async Task<HandlerResponse<SignInCommandResponse>> Handle(SignInCommandRequest request, CancellationToken cancellationToken)
     {
         var storedUser = await userRepository.GetByEmailAsync(request.Email, cancellationToken);
 
-        if (storedUser is null || !passwordHasher.Verify(request.Password, storedUser.PasswordHash))
+        if (storedUser is null || !passwordHasher.Verify(request.Password, storedUser.Password))
         {
             return new HandlerResponse<SignInCommandResponse>(null, "Invalid email or password.", false);
         }

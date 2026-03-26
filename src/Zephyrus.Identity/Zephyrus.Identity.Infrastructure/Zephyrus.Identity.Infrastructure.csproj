@@ -7,12 +7,24 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Zephyrus.Logger\Zephyrus.Logger.csproj" />
+      <ProjectReference Include="..\..\Zephyrus.SharedKernel\Zephyrus.SharedKernel.csproj" />
       <ProjectReference Include="..\Zephyrus.Identity.Application\Zephyrus.Identity.Application.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Messaging\" />
-      <Folder Include="Persistence\" />
+    </ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Persistence\Migrations\*.sql" />
+	</ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
+      <PackageReference Include="Dapper" Version="2.1.72" />
+      <PackageReference Include="Npgsql" Version="10.0.2" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.16.0" />
     </ItemGroup>
 
 </Project>

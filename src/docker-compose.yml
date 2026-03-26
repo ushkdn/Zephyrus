@@ -1,15 +1,15 @@
 services:
-  logs.db:
+  zephyrus.identity.database:
     image: postgres:latest
-    container_name: logs.db
+    container_name: zephyrus.identity.database
     ports:
       - 5433:5432
     environment:
-      POSTGRES_DB: logs.db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: zephyrus.identity.database
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     volumes:
-      - logs.db.data:/var/lib/postgresql
+      - zephyrus.identity.database.data:/var/lib/postgresql
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -22,7 +22,7 @@ services:
     volumes:
       - pgadmin.data:/var/lib/pgadmin/data
     depends_on:
-      - logs.db
+      - zephyrus.identity.database
 
   seq:
     image: datalust/seq:2024
@@ -35,6 +35,6 @@ services:
       - seq.data:/var/lib/seq/data
 
 volumes:
-  logs.db.data:
+  zephyrus.identity.database.data:
   pgadmin.data:
   seq.data:

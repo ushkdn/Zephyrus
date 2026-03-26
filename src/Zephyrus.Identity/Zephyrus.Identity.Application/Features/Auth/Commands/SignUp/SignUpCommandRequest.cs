@@ -7,6 +7,7 @@ namespace Zephyrus.Identity.Application.Features.Auth.Commands.SignUp;
 public record SignUpCommandRequest(
     string Email,
     string Password,
+    string ConfirmPassword,
     string FirstName,
     string MiddleName,
     string LastName,

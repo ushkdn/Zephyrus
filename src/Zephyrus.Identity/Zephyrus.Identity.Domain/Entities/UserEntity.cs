@@ -1,21 +1,25 @@
 ﻿using Zephyrus.Identity.Domain.Enums;
-using Zephyrus.SharedKernel.Common.Entities;
 
 namespace Zephyrus.Identity.Domain.Entities;
 
-public class UserEntity : Entity
+public class UserEntity
 {
-    public string Email { get; set; }
+    public Guid Id { get; set; }
+    public string Email { get; set; } = string.Empty;
 
-    public string PasswordHash { get; set; }
+    public string Password { get; set; } = string.Empty;
 
-    public string FirstName { get; set; }
+    public string FirstName { get; set; } = string.Empty;
 
-    public string MiddleName { get; set; }
+    public string MiddleName { get; set; } = string.Empty;
 
-    public string LastName { get; set; }
+    public string LastName { get; set; } = string.Empty;
 
     public UserRole Role { get; set; }
 
     public bool IsActive { get; set; }
+
+    public DateTime DateCreated { get; set; }
+
+    public DateTime DateUpdated { get; set; }
 }

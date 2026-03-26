@@ -11,19 +11,24 @@ public class SignUpCommandValidator : AbstractValidator<SignUpCommandRequest>
             .EmailAddress().WithMessage("Incorrect email format.").WithErrorCode("400");
 
         RuleFor(x => x.Password)
-            .NotEmpty().WithMessage("Password cannot be empty").WithErrorCode("400")
-            .Length(5, 20).WithMessage("Password cannot be less than 5 and more than 20 characters").WithErrorCode("400");
+            .NotEmpty().WithMessage("Password cannot be empty.").WithErrorCode("400")
+            .Length(5, 20).WithMessage("Password cannot be less than 5 and more than 20 characters.").WithErrorCode("400");
+
+        RuleFor(x => x.ConfirmPassword)
+            .Equal(x => x.Password)
+            .WithMessage("Passwords do not match.")
+            .WithErrorCode("400");
 
         RuleFor(x => x.FirstName)
-            .NotEmpty().WithMessage("First name cannot be empty").WithErrorCode("400")
-            .Length(2, 20).WithMessage("First name cannot be less than 2 and more than 20 characters").WithErrorCode("400");
+            .NotEmpty().WithMessage("First name cannot be empty.").WithErrorCode("400")
+            .Length(2, 20).WithMessage("First name cannot be less than 2 and more than 20 characters.").WithErrorCode("400");
 
         RuleFor(x => x.LastName)
-            .NotEmpty().WithMessage("Last name cannot be empty").WithErrorCode("400")
-            .Length(2, 20).WithMessage("Last name cannot be less than 2 and more than 20 characters").WithErrorCode("400");
+            .NotEmpty().WithMessage("Last name cannot be empty.").WithErrorCode("400")
+            .Length(2, 20).WithMessage("Last name cannot be less than 2 and more than 20 characters.").WithErrorCode("400");
 
         RuleFor(x => x.MiddleName)
-            .NotEmpty().WithMessage("Middle name cannot be empty").WithErrorCode("400")
-            .Length(2, 20).WithMessage("Middle name cannot be less than 2 and more than 20 characters").WithErrorCode("400");
+            .NotEmpty().WithMessage("Middle name cannot be empty.").WithErrorCode("400")
+            .Length(2, 20).WithMessage("Middle name cannot be less than 2 and more than 20 characters.").WithErrorCode("400");
     }
 }

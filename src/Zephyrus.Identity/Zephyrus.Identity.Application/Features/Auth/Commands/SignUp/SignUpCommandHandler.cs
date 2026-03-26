@@ -24,7 +24,7 @@ public class SignUpCommandHandler(
             FirstName = request.FirstName.Trim(),
             MiddleName = request.MiddleName.Trim(),
             LastName = request.LastName.Trim(),
-            PasswordHash = passwordHasher.Hash(request.Password).Trim(),
+            Password = passwordHasher.Hash(request.Password).Trim(),
             Role = request.Role,
             IsActive = true,
             DateCreated = DateTime.UtcNow,

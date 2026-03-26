@@ -6,9 +6,4 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\Zephyrus.Logger\Zephyrus.Logger.csproj" />
-      <ProjectReference Include="..\..\Zephyrus.SharedKernel\Zephyrus.SharedKernel.csproj" />
-    </ItemGroup>
-
 </Project>
