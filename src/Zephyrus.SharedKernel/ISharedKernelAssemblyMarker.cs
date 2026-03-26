@@ -1,0 +1,3 @@
+namespace Zephyrus.SharedKernel;
+
+public interface ISharedKernelAssemblyMarker;

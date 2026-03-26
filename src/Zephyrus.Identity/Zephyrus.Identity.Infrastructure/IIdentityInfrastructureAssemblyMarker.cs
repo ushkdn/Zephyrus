@@ -1,0 +1,3 @@
+namespace Zephyrus.Identity.Infrastructure;
+
+public interface IIdentityInfrastructureAssemblyMarker;
