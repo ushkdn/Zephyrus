@@ -1,4 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
@@ -7,15 +7,25 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Zephyrus.Identity.WebApi/Zephyrus.Identity.WebApi.csproj", "Zephyrus.Identity.WebApi/"]
-RUN dotnet restore "Zephyrus.Identity.WebApi/Zephyrus.Identity.WebApi.csproj"
+
+COPY ["Zephyrus.Logger/Zephyrus.Logger.csproj", "Zephyrus.Logger/"]
+COPY ["Zephyrus.SharedKernel/Zephyrus.SharedKernel.csproj", "Zephyrus.SharedKernel/"]
+COPY ["Zephyrus.Identity/Zephyrus.Identity.Domain/Zephyrus.Identity.Domain.csproj", "Zephyrus.Identity/Zephyrus.Identity.Domain/"]
+COPY ["Zephyrus.Identity/Zephyrus.Identity.Application/Zephyrus.Identity.Application.csproj", "Zephyrus.Identity/Zephyrus.Identity.Application/"]
+COPY ["Zephyrus.Identity/Zephyrus.Identity.Infrastructure/Zephyrus.Identity.Infrastructure.csproj", "Zephyrus.Identity/Zephyrus.Identity.Infrastructure/"]
+COPY ["Zephyrus.Identity/Zephyrus.Identity.Presentation/Zephyrus.Identity.Presentation.csproj", "Zephyrus.Identity/Zephyrus.Identity.Presentation/"]
+COPY ["Zephyrus.Identity/Zephyrus.Identity.WebApi/Zephyrus.Identity.WebApi.csproj", "Zephyrus.Identity/Zephyrus.Identity.WebApi/"]
+
+RUN dotnet restore "Zephyrus.Identity/Zephyrus.Identity.WebApi/Zephyrus.Identity.WebApi.csproj"
+
 COPY . .
-WORKDIR "/src/Zephyrus.Identity.WebApi"
-RUN dotnet build "./Zephyrus.Identity.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+WORKDIR "/src/Zephyrus.Identity/Zephyrus.Identity.WebApi"
+RUN dotnet build "Zephyrus.Identity.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Zephyrus.Identity.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Zephyrus.Identity.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

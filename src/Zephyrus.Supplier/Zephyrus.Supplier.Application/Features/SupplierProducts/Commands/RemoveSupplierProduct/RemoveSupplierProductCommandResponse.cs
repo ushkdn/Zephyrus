@@ -1,0 +1,3 @@
+namespace Zephyrus.Supplier.Application.Features.SupplierProducts.Commands.RemoveSupplierProduct;
+
+public record RemoveSupplierProductCommandResponse(Guid Id);

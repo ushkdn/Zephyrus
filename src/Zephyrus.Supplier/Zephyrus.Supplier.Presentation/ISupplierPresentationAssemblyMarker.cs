@@ -1,0 +1,3 @@
+namespace Zephyrus.Supplier.Presentation;
+
+public interface ISupplierPresentationAssemblyMarker;

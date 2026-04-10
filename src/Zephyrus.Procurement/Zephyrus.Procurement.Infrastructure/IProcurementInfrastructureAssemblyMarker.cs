@@ -1,0 +1,3 @@
+namespace Zephyrus.Procurement.Infrastructure;
+
+public interface IProcurementInfrastructureAssemblyMarker;

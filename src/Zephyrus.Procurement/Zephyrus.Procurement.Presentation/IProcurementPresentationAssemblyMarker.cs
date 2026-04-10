@@ -1,0 +1,3 @@
+namespace Zephyrus.Procurement.Presentation;
+
+public interface IProcurementPresentationAssemblyMarker;

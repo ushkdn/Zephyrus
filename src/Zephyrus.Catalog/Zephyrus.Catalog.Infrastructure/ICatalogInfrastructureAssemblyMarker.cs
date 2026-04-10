@@ -1,0 +1,3 @@
+namespace Zephyrus.Catalog.Infrastructure;
+
+public interface ICatalogInfrastructureAssemblyMarker;
