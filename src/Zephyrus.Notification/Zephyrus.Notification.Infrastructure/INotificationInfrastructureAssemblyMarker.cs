@@ -1,0 +1,3 @@
+namespace Zephyrus.Notification.Infrastructure;
+
+public interface INotificationInfrastructureAssemblyMarker;

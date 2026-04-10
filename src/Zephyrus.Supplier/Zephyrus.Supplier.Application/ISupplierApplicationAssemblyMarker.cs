@@ -1,0 +1,3 @@
+namespace Zephyrus.Supplier.Application;
+
+public interface ISupplierApplicationAssemblyMarker;

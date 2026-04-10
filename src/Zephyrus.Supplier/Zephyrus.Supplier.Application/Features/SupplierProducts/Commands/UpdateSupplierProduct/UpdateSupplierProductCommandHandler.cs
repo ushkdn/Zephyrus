@@ -1,0 +1,32 @@
+using MediatR;
+using Zephyrus.SharedKernel.Common;
+using Zephyrus.Supplier.Application.Interfaces;
+
+namespace Zephyrus.Supplier.Application.Features.SupplierProducts.Commands.UpdateSupplierProduct;
+
+public class UpdateSupplierProductCommandHandler(ISupplierProductRepository supplierProductRepository)
+    : IRequestHandler<UpdateSupplierProductCommandRequest, HandlerResponse<UpdateSupplierProductCommandResponse>>
+{
+    public async Task<HandlerResponse<UpdateSupplierProductCommandResponse>> Handle(UpdateSupplierProductCommandRequest request, CancellationToken cancellationToken)
+    {
+        var supplierProduct = await supplierProductRepository.GetByIdAsync(request.Id, cancellationToken);
+
+        if (supplierProduct is null)
+            return new HandlerResponse<UpdateSupplierProductCommandResponse>(null, $"Supplier product with id: {request.Id} not found.", false);
+
+        if (supplierProduct.SupplierId != request.SupplierId)
+            return new HandlerResponse<UpdateSupplierProductCommandResponse>(null, $"Supplier product does not belong to supplier with id: {request.SupplierId}.", false);
+
+        supplierProduct.Price = request.Price;
+        supplierProduct.Currency = request.Currency.Trim().ToUpper();
+        supplierProduct.IsAvailable = request.IsAvailable;
+        supplierProduct.DateUpdated = DateTime.UtcNow;
+
+        await supplierProductRepository.UpdateAsync(supplierProduct, cancellationToken);
+
+        return new HandlerResponse<UpdateSupplierProductCommandResponse>(
+            new UpdateSupplierProductCommandResponse(supplierProduct.Id, supplierProduct.SupplierId, supplierProduct.ProductId, supplierProduct.Price, supplierProduct.Currency, supplierProduct.IsAvailable),
+            "Supplier product updated successfully.",
+            true);
+    }
+}

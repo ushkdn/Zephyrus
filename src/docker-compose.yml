@@ -10,6 +10,185 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - zephyrus.identity.database.data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  zephyrus.catalog.database:
+    image: postgres:latest
+    container_name: zephyrus.catalog.database
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_DB: zephyrus.catalog.database
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - zephyrus.catalog.database.data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  zephyrus.notification.database:
+    image: postgres:latest
+    container_name: zephyrus.notification.database
+    ports:
+      - 5437:5432
+    environment:
+      POSTGRES_DB: zephyrus.notification.database
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - zephyrus.notification.database.data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  zephyrus.supplier.database:
+    image: postgres:latest
+    container_name: zephyrus.supplier.database
+    ports:
+      - 5435:5432
+    environment:
+      POSTGRES_DB: zephyrus.supplier.database
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - zephyrus.supplier.database.data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  zephyrus.procurement.database:
+    image: postgres:latest
+    container_name: zephyrus.procurement.database
+    ports:
+      - 5436:5432
+    environment:
+      POSTGRES_DB: zephyrus.procurement.database
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - zephyrus.procurement.database.data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  zephyrus.gateway:
+    build:
+      context: .
+      dockerfile: Zephyrus.Gateway/Zephyrus.Gateway.WebApi/Dockerfile
+    container_name: zephyrus.gateway
+    ports:
+      - 5000:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - zephyrus.identity
+      - zephyrus.catalog
+      - zephyrus.supplier
+      - zephyrus.procurement
+      - zephyrus.notification
+
+  zephyrus.identity:
+    build:
+      context: .
+      dockerfile: Zephyrus.Identity/Zephyrus.Identity.WebApi/Dockerfile
+    container_name: zephyrus.identity
+    ports:
+      - 5001:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      zephyrus.identity.database:
+        condition: service_healthy
+
+  zephyrus.catalog:
+    build:
+      context: .
+      dockerfile: Zephyrus.Catalog/Zephyrus.Catalog.WebApi/Dockerfile
+    container_name: zephyrus.catalog
+    ports:
+      - 5002:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      zephyrus.catalog.database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  zephyrus.supplier:
+    build:
+      context: .
+      dockerfile: Zephyrus.Supplier/Zephyrus.Supplier.WebApi/Dockerfile
+    container_name: zephyrus.supplier
+    ports:
+      - 5003:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      zephyrus.supplier.database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  zephyrus.procurement:
+    build:
+      context: .
+      dockerfile: Zephyrus.Procurement/Zephyrus.Procurement.WebApi/Dockerfile
+    container_name: zephyrus.procurement
+    ports:
+      - 5004:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      zephyrus.procurement.database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  zephyrus.notification:
+    build:
+      context: .
+      dockerfile: Zephyrus.Notification/Zephyrus.Notification.WebApi/Dockerfile
+    container_name: zephyrus.notification
+    ports:
+      - 5005:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      zephyrus.notification.database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq.data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -23,6 +202,10 @@ services:
       - pgadmin.data:/var/lib/pgadmin/data
     depends_on:
       - zephyrus.identity.database
+      - zephyrus.catalog.database
+      - zephyrus.supplier.database
+      - zephyrus.procurement.database
+      - zephyrus.notification.database
 
   seq:
     image: datalust/seq:2024
@@ -36,5 +219,10 @@ services:
 
 volumes:
   zephyrus.identity.database.data:
+  zephyrus.catalog.database.data:
+  zephyrus.supplier.database.data:
+  zephyrus.procurement.database.data:
+  zephyrus.notification.database.data:
+  rabbitmq.data:
   pgadmin.data:
   seq.data:

@@ -1,0 +1,22 @@
+using FluentValidation;
+
+namespace Zephyrus.Supplier.Application.Features.SupplierProducts.Commands.UpdateSupplierProduct;
+
+public class UpdateSupplierProductCommandValidator : AbstractValidator<UpdateSupplierProductCommandRequest>
+{
+    public UpdateSupplierProductCommandValidator()
+    {
+        RuleFor(x => x.Id)
+            .NotEmpty().WithMessage("Id is required.");
+
+        RuleFor(x => x.SupplierId)
+            .NotEmpty().WithMessage("SupplierId is required.");
+
+        RuleFor(x => x.Price)
+            .GreaterThan(0).WithMessage("Price must be greater than 0.");
+
+        RuleFor(x => x.Currency)
+            .NotEmpty().WithMessage("Currency is required.")
+            .MaximumLength(10).WithMessage("Currency must not exceed 10 characters.");
+    }
+}

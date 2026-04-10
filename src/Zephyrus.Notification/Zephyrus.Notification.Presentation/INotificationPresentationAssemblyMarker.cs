@@ -1,0 +1,3 @@
+namespace Zephyrus.Notification.Presentation;
+
+public interface INotificationPresentationAssemblyMarker;
