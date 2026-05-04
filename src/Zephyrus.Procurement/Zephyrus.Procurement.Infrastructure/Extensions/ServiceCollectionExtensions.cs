@@ -35,10 +35,10 @@ public static class ServiceCollectionExtensions
         services.AddMassTransit(x =>
         {
             x.AddRequestClient<CheckProductExistsRequest>(
-                new Uri("queue:check-product-exists"));
+                new Uri("exchange:check-product-exists"));
 
             x.AddRequestClient<CheckSupplierExistsRequest>(
-                new Uri("queue:check-supplier-exists"));
+                new Uri("exchange:check-supplier-exists"));
 
             x.UsingRabbitMq((_, cfg) =>
             {

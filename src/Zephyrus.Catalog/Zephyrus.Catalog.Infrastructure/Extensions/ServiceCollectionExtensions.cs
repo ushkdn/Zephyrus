@@ -32,7 +32,8 @@ public static class ServiceCollectionExtensions
 
         services.AddMassTransit(x =>
         {
-            x.AddConsumer<CheckProductExistsConsumer>();
+            x.AddConsumer<CheckProductExistsConsumer>()
+                .Endpoint(e => e.Name = "check-product-exists");
 
             x.UsingRabbitMq((context, cfg) =>
             {

@@ -27,6 +27,7 @@ public class Program
             builder.Services.AddOpenApi();
             builder.Services.AddLayers(builder.Configuration);
 
+
             var app = builder.Build();
 
             var connectionString = builder.Configuration.GetConnectionString("ProcurementDatabase")
