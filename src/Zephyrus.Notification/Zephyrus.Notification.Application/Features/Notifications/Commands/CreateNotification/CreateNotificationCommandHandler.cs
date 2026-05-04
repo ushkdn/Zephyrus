@@ -1,11 +1,14 @@
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Zephyrus.Notification.Application.Interfaces;
 using Zephyrus.Notification.Domain.Entities;
 using Zephyrus.SharedKernel.Common;
 
 namespace Zephyrus.Notification.Application.Features.Notifications.Commands.CreateNotification;
 
-public class CreateNotificationCommandHandler(INotificationRepository notificationRepository)
+public class CreateNotificationCommandHandler(
+    INotificationRepository notificationRepository,
+    ILogger<CreateNotificationCommandHandler> logger)
     : IRequestHandler<CreateNotificationCommandRequest, HandlerResponse<CreateNotificationCommandResponse>>
 {
     public async Task<HandlerResponse<CreateNotificationCommandResponse>> Handle(CreateNotificationCommandRequest request, CancellationToken cancellationToken)
@@ -22,6 +25,8 @@ public class CreateNotificationCommandHandler(INotificationRepository notificati
         };
 
         await notificationRepository.AddAsync(notification, cancellationToken);
+
+        logger.LogInformation("Notification {NotificationId} created for recipient {RecipientId}", notification.Id, notification.RecipientId);
 
         return new HandlerResponse<CreateNotificationCommandResponse>(
             new CreateNotificationCommandResponse(notification.Id, notification.RecipientId, notification.Title, notification.Type),

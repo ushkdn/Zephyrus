@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Zephyrus.Catalog.Application.Interfaces;
 using Zephyrus.Catalog.Domain.Entities;
 using Zephyrus.SharedKernel.Common;
@@ -7,7 +8,8 @@ namespace Zephyrus.Catalog.Application.Features.Products.Commands.CreateProduct;
 
 public class CreateProductCommandHandler(
     IProductRepository productRepository,
-    ICategoryRepository categoryRepository)
+    ICategoryRepository categoryRepository,
+    ILogger<CreateProductCommandHandler> logger)
     : IRequestHandler<CreateProductCommandRequest, HandlerResponse<CreateProductCommandResponse>>
 {
     public async Task<HandlerResponse<CreateProductCommandResponse>> Handle(CreateProductCommandRequest request, CancellationToken cancellationToken)
@@ -15,10 +17,16 @@ public class CreateProductCommandHandler(
         var categoryExists = await categoryRepository.GetByIdAsync(request.CategoryId, cancellationToken);
 
         if (categoryExists is null)
+        {
+            logger.LogWarning("Category {CategoryId} not found when creating product '{Name}'", request.CategoryId, request.Name);
             return new HandlerResponse<CreateProductCommandResponse>(null, $"Category with id: {request.CategoryId} not found.", false);
+        }
 
         if (await productRepository.ExistsByNameAsync(request.Name, cancellationToken))
+        {
+            logger.LogWarning("Product '{Name}' already exists", request.Name);
             return new HandlerResponse<CreateProductCommandResponse>(null, $"Product '{request.Name}' already exists.", false);
+        }
 
         var product = new ProductEntity
         {
@@ -33,6 +41,8 @@ public class CreateProductCommandHandler(
         };
 
         await productRepository.AddAsync(product, cancellationToken);
+
+        logger.LogInformation("Product {ProductId} '{Name}' created", product.Id, product.Name);
 
         return new HandlerResponse<CreateProductCommandResponse>(
             new CreateProductCommandResponse(product.Id, product.Name, product.Unit, product.CategoryId),

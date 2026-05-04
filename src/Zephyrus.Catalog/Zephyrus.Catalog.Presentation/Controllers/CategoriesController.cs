@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Zephyrus.Catalog.Application.Features.Categories.Commands.CreateCategory;
 using Zephyrus.Catalog.Application.Features.Categories.Commands.DeleteCategory;
 using Zephyrus.Catalog.Application.Features.Categories.Commands.UpdateCategory;
@@ -12,7 +13,7 @@ namespace Zephyrus.Catalog.Presentation.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/categories")]
-public class CategoriesController(ISender sender) : ControllerBase
+public class CategoriesController(ISender sender, ILogger<CategoriesController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
@@ -27,7 +28,10 @@ public class CategoriesController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetCategoryByIdQueryRequest(id), cancellationToken);
 
         if (!result.Success)
+        {
+            logger.LogWarning("Category {CategoryId} not found", id);
             return NotFound(result);
+        }
 
         return Ok(result);
     }
@@ -38,8 +42,12 @@ public class CategoriesController(ISender sender) : ControllerBase
         var result = await sender.Send(request, cancellationToken);
 
         if (!result.Success)
+        {
+            logger.LogWarning("Failed to create category '{Name}' — {Message}", request.Name, result.Message);
             return BadRequest(result);
+        }
 
+        logger.LogInformation("Category '{Name}' created", request.Name);
         return Ok(result);
     }
 
@@ -49,8 +57,12 @@ public class CategoriesController(ISender sender) : ControllerBase
         var result = await sender.Send(request with { Id = id }, cancellationToken);
 
         if (!result.Success)
+        {
+            logger.LogWarning("Failed to update category {CategoryId} — {Message}", id, result.Message);
             return BadRequest(result);
+        }
 
+        logger.LogInformation("Category {CategoryId} updated", id);
         return Ok(result);
     }
 
@@ -60,8 +72,12 @@ public class CategoriesController(ISender sender) : ControllerBase
         var result = await sender.Send(new DeleteCategoryCommandRequest(id), cancellationToken);
 
         if (!result.Success)
+        {
+            logger.LogWarning("Failed to delete category {CategoryId} — {Message}", id, result.Message);
             return NotFound(result);
+        }
 
+        logger.LogInformation("Category {CategoryId} deleted", id);
         return Ok(result);
     }
 }

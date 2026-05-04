@@ -1,10 +1,13 @@
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Zephyrus.Procurement.Application.Interfaces;
 using Zephyrus.SharedKernel.Common;
 
 namespace Zephyrus.Procurement.Application.Features.PurchaseRequests.Queries.GetPurchaseRequestById;
 
-public class GetPurchaseRequestByIdQueryHandler(IPurchaseRequestRepository purchaseRequestRepository)
+public class GetPurchaseRequestByIdQueryHandler(
+    IPurchaseRequestRepository purchaseRequestRepository,
+    ILogger<GetPurchaseRequestByIdQueryHandler> logger)
     : IRequestHandler<GetPurchaseRequestByIdQueryRequest, HandlerResponse<GetPurchaseRequestByIdQueryResponse>>
 {
     public async Task<HandlerResponse<GetPurchaseRequestByIdQueryResponse>> Handle(GetPurchaseRequestByIdQueryRequest request, CancellationToken cancellationToken)
@@ -12,7 +15,10 @@ public class GetPurchaseRequestByIdQueryHandler(IPurchaseRequestRepository purch
         var pr = await purchaseRequestRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (pr is null)
+        {
+            logger.LogWarning("Purchase request {RequestId} not found", request.Id);
             return new HandlerResponse<GetPurchaseRequestByIdQueryResponse>(null, $"Purchase request with id: {request.Id} not found.", false);
+        }
 
         return new HandlerResponse<GetPurchaseRequestByIdQueryResponse>(
             new GetPurchaseRequestByIdQueryResponse(pr.Id, pr.ProductId, pr.Quantity, pr.Unit, pr.RequestedBy, pr.Status.ToString(), pr.Comment, pr.DateCreated, pr.DateUpdated),

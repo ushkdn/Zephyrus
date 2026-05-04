@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using Zephyrus.Procurement.Application.Features.PurchaseRequests.Commands.ApprovePurchaseRequest;
 using Zephyrus.Procurement.Application.Features.PurchaseRequests.Commands.CreatePurchaseRequest;
@@ -13,7 +14,7 @@ namespace Zephyrus.Procurement.Presentation.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/purchase-requests")]
-public class PurchaseRequestsController(ISender sender) : ControllerBase
+public class PurchaseRequestsController(ISender sender, ILogger<PurchaseRequestsController> logger) : ControllerBase
 {
     [HttpGet]
     [Authorize(Roles = "Admin,Manager")]
@@ -29,7 +30,10 @@ public class PurchaseRequestsController(ISender sender) : ControllerBase
         var result = await sender.Send(new GetPurchaseRequestByIdQueryRequest(id), cancellationToken);
 
         if (!result.Success)
+        {
+            logger.LogWarning("Purchase request {RequestId} not found", id);
             return NotFound(result);
+        }
 
         return Ok(result);
     }
@@ -41,8 +45,12 @@ public class PurchaseRequestsController(ISender sender) : ControllerBase
         var result = await sender.Send(request with { RequestedBy = userId }, cancellationToken);
 
         if (!result.Success)
+        {
+            logger.LogWarning("User {UserId} failed to create purchase request — {Message}", userId, result.Message);
             return BadRequest(result);
+        }
 
+        logger.LogInformation("User {UserId} created purchase request for product {ProductId}", userId, request.ProductId);
         return Ok(result);
     }
 
@@ -53,8 +61,12 @@ public class PurchaseRequestsController(ISender sender) : ControllerBase
         var result = await sender.Send(new ApprovePurchaseRequestCommandRequest(id), cancellationToken);
 
         if (!result.Success)
+        {
+            logger.LogWarning("Failed to approve purchase request {RequestId} — {Message}", id, result.Message);
             return BadRequest(result);
+        }
 
+        logger.LogInformation("Purchase request {RequestId} approved", id);
         return Ok(result);
     }
 
@@ -65,8 +77,12 @@ public class PurchaseRequestsController(ISender sender) : ControllerBase
         var result = await sender.Send(request with { Id = id }, cancellationToken);
 
         if (!result.Success)
+        {
+            logger.LogWarning("Failed to reject purchase request {RequestId} — {Message}", id, result.Message);
             return BadRequest(result);
+        }
 
+        logger.LogInformation("Purchase request {RequestId} rejected", id);
         return Ok(result);
     }
 }

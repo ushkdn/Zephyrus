@@ -1,5 +1,6 @@
 using MassTransit;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Zephyrus.Procurement.Application.Interfaces;
 using Zephyrus.Procurement.Domain.Entities;
 using Zephyrus.Procurement.Domain.Enums;
@@ -11,13 +12,17 @@ namespace Zephyrus.Procurement.Application.Features.PurchaseRequests.Commands.Cr
 public class CreatePurchaseRequestCommandHandler(
     IPurchaseRequestRepository purchaseRequestRepository,
     IProductExistenceChecker productExistenceChecker,
-    IPublishEndpoint publishEndpoint)
+    IPublishEndpoint publishEndpoint,
+    ILogger<CreatePurchaseRequestCommandHandler> logger)
     : IRequestHandler<CreatePurchaseRequestCommandRequest, HandlerResponse<CreatePurchaseRequestCommandResponse>>
 {
     public async Task<HandlerResponse<CreatePurchaseRequestCommandResponse>> Handle(CreatePurchaseRequestCommandRequest request, CancellationToken cancellationToken)
     {
         if (!await productExistenceChecker.ExistsAsync(request.ProductId, cancellationToken))
+        {
+            logger.LogWarning("Product {ProductId} not found in Catalog", request.ProductId);
             return new HandlerResponse<CreatePurchaseRequestCommandResponse>(null, $"Product with id: {request.ProductId} not found in Catalog.", false);
+        }
 
         var purchaseRequest = new PurchaseRequestEntity
         {
@@ -39,6 +44,8 @@ public class CreatePurchaseRequestCommandHandler(
             purchaseRequest.Quantity,
             purchaseRequest.Unit,
             purchaseRequest.RequestedBy), cancellationToken);
+
+        logger.LogInformation("Purchase request {RequestId} created by user {UserId} for product {ProductId}", purchaseRequest.Id, purchaseRequest.RequestedBy, purchaseRequest.ProductId);
 
         return new HandlerResponse<CreatePurchaseRequestCommandResponse>(
             new CreatePurchaseRequestCommandResponse(purchaseRequest.Id, purchaseRequest.ProductId, purchaseRequest.Quantity, purchaseRequest.Unit, purchaseRequest.Status.ToString()),

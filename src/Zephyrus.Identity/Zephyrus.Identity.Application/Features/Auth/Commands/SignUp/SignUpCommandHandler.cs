@@ -1,4 +1,5 @@
-﻿using MediatR;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using Zephyrus.Identity.Application.Interfaces;
 using Zephyrus.Identity.Domain.Entities;
 using Zephyrus.SharedKernel.Common;
@@ -7,13 +8,15 @@ namespace Zephyrus.Identity.Application.Features.Auth.Commands.SignUp;
 
 public class SignUpCommandHandler(
     IUserRepository userRepository,
-    IPasswordHasher passwordHasher
-    ) : IRequestHandler<SignUpCommandRequest, HandlerResponse<SignUpCommandResponse>>
+    IPasswordHasher passwordHasher,
+    ILogger<SignUpCommandHandler> logger)
+    : IRequestHandler<SignUpCommandRequest, HandlerResponse<SignUpCommandResponse>>
 {
     public async Task<HandlerResponse<SignUpCommandResponse>> Handle(SignUpCommandRequest request, CancellationToken cancellationToken)
     {
         if (await userRepository.IsExistsByEmailAsync(request.Email, cancellationToken))
         {
+            logger.LogWarning("Sign-up attempt with already existing email: {Email}", request.Email);
             return new HandlerResponse<SignUpCommandResponse>(null, $"User with email: {request.Email} is already exists.", false);
         }
 
@@ -33,10 +36,11 @@ public class SignUpCommandHandler(
 
         await userRepository.AddAsync(userToStore, cancellationToken);
 
+        logger.LogInformation("User {UserId} registered with email: {Email}", userToStore.Id, userToStore.Email);
+
         return new HandlerResponse<SignUpCommandResponse>(
             new SignUpCommandResponse(userToStore.Id, request.Email),
             $"User created successfully with id: {userToStore.Id}",
-            true
-            );
+            true);
     }
 }

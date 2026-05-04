@@ -2,7 +2,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
@@ -21,11 +20,10 @@ RUN dotnet restore "Zephyrus.Catalog/Zephyrus.Catalog.WebApi/Zephyrus.Catalog.We
 COPY . .
 
 WORKDIR "/src/Zephyrus.Catalog/Zephyrus.Catalog.WebApi"
-RUN dotnet build "Zephyrus.Catalog.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "Zephyrus.Catalog.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Zephyrus.Catalog.WebApi.csproj" -c $BUILD_CONFIGURATION --no-restore -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
