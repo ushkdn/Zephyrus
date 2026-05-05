@@ -5,6 +5,7 @@ using Zephyrus.Identity.Infrastructure.Persistence;
 using Zephyrus.Identity.Infrastructure.Persistence.Repositories;
 using Zephyrus.Identity.Infrastructure.Services;
 using Zephyrus.Identity.Infrastructure.Settings;
+using Zephyrus.SharedKernel.Common.Cache;
 using Zephyrus.SharedKernel.Common.Extensions;
 
 namespace Zephyrus.Identity.Infrastructure.Extensions;
@@ -23,6 +24,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IJwtService>(_ => new JwtService(jwtSettings));
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+        services.AddSingleton<ICacheService, RedisCacheService>();
 
         return services;
     }
