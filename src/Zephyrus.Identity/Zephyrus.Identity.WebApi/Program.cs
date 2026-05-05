@@ -4,6 +4,7 @@ using Zephyrus.Identity.WebApi.Extensions;
 using Zephyrus.Identity.WebApi.Middleware;
 using Zephyrus.Logger;
 using Zephyrus.SharedKernel.Common.Database;
+using Zephyrus.SharedKernel.Common.Extensions;
 
 namespace Zephyrus.Identity.WebApi;
 
@@ -23,6 +24,8 @@ public class Program
             SerilogFactory.CreateLogger(builder.Services, builder.Configuration);
             builder.Host.UseSerilog();
 
+            builder.LoadEnvironment("IDENTITY");
+            var conf = builder.Configuration;
             builder.Services.AddOpenApi();
             builder.Services.AddLayers(builder.Configuration);
 

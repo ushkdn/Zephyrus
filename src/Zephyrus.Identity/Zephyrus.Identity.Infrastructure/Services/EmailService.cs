@@ -1,4 +1,5 @@
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using MimeKit;
 using Zephyrus.Identity.Application.Interfaces;
 using Zephyrus.Identity.Application.Models;
@@ -16,8 +17,12 @@ public class EmailService(EmailSettings emailSettings) : IEmailService
         email.Subject = message.Subject;
         email.Body = new TextPart("html") { Text = message.Body };
 
+        var socketOptions = emailSettings.UseSsl
+            ? SecureSocketOptions.SslOnConnect
+            : SecureSocketOptions.StartTls;
+
         using var client = new SmtpClient();
-        await client.ConnectAsync(emailSettings.Host, emailSettings.Port, true, cancellationToken);
+        await client.ConnectAsync(emailSettings.Host, emailSettings.Port, socketOptions, cancellationToken);
         await client.AuthenticateAsync(emailSettings.Username, emailSettings.Password, cancellationToken);
         await client.SendAsync(email, cancellationToken);
         await client.DisconnectAsync(true, cancellationToken);

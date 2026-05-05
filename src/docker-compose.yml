@@ -91,7 +91,7 @@ services:
   redis:
     image: redis:latest
     ports:
-      - "6379:6378"
+      - "6379:6379"
     volumes:
       - redis.data:/data
 
@@ -143,104 +143,104 @@ services:
 
   # ─── Microservices ───────────────────────────────────────────────────────────
 
-  zephyrus.identity:
-    build:
-      context: .
-      dockerfile: Zephyrus.Identity/Zephyrus.Identity.WebApi/Dockerfile
-    container_name: zephyrus.identity
-    ports:
-      - 7002:8080
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-    depends_on:
-      zephyrus.identity.database:
-        condition: service_healthy
+#  zephyrus.identity:
+#    build:
+#      context: .
+#      dockerfile: Zephyrus.Identity/Zephyrus.Identity.WebApi/Dockerfile
+#    container_name: zephyrus.identity
+#    ports:
+#      - 7002:8080
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Production
+#    depends_on:
+#      zephyrus.identity.database:
+#        condition: service_healthy
+#
+#  zephyrus.catalog:
+#    build:
+#      context: .
+#      dockerfile: Zephyrus.Catalog/Zephyrus.Catalog.WebApi/Dockerfile
+#    container_name: zephyrus.catalog
+#    ports:
+#      - 7000:8080
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Production
+#    depends_on:
+#      zephyrus.catalog.database:
+#        condition: service_healthy
+#      rabbitmq:
+#        condition: service_healthy
+#
+#  zephyrus.supplier:
+#    build:
+#      context: .
+#      dockerfile: Zephyrus.Supplier/Zephyrus.Supplier.WebApi/Dockerfile
+#    container_name: zephyrus.supplier
+#    ports:
+#      - 7005:8080
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Production
+#    depends_on:
+#      zephyrus.supplier.database:
+#        condition: service_healthy
+#      rabbitmq:
+#        condition: service_healthy
+#
+#  zephyrus.procurement:
+#    build:
+#      context: .
+#      dockerfile: Zephyrus.Procurement/Zephyrus.Procurement.WebApi/Dockerfile
+#    container_name: zephyrus.procurement
+#    ports:
+#      - 7004:8080
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Production
+#    depends_on:
+#      zephyrus.procurement.database:
+#        condition: service_healthy
+#      rabbitmq:
+#        condition: service_healthy
+#
+#  zephyrus.notification:
+#    build:
+#      context: .
+#      dockerfile: Zephyrus.Notification/Zephyrus.Notification.WebApi/Dockerfile
+#    container_name: zephyrus.notification
+#    ports:
+#      - 7003:8080
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Production
+#    depends_on:
+#      zephyrus.notification.database:
+#        condition: service_healthy
+#      rabbitmq:
+#        condition: service_healthy
+#
+#  zephyrus.gateway:
+#    build:
+#      context: .
+#      dockerfile: Zephyrus.Gateway/Zephyrus.Gateway.WebApi/Dockerfile
+#    container_name: zephyrus.gateway
+#    ports:
+#      - 7001:8080
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Production
+#    depends_on:
+#      - zephyrus.identity
+#      - zephyrus.catalog
+#      - zephyrus.supplier
+#      - zephyrus.procurement
+#      - zephyrus.notification
 
-  zephyrus.catalog:
-    build:
-      context: .
-      dockerfile: Zephyrus.Catalog/Zephyrus.Catalog.WebApi/Dockerfile
-    container_name: zephyrus.catalog
-    ports:
-      - 7000:8080
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-    depends_on:
-      zephyrus.catalog.database:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-
-  zephyrus.supplier:
-    build:
-      context: .
-      dockerfile: Zephyrus.Supplier/Zephyrus.Supplier.WebApi/Dockerfile
-    container_name: zephyrus.supplier
-    ports:
-      - 7005:8080
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-    depends_on:
-      zephyrus.supplier.database:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-
-  zephyrus.procurement:
-    build:
-      context: .
-      dockerfile: Zephyrus.Procurement/Zephyrus.Procurement.WebApi/Dockerfile
-    container_name: zephyrus.procurement
-    ports:
-      - 7004:8080
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-    depends_on:
-      zephyrus.procurement.database:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-
-  zephyrus.notification:
-    build:
-      context: .
-      dockerfile: Zephyrus.Notification/Zephyrus.Notification.WebApi/Dockerfile
-    container_name: zephyrus.notification
-    ports:
-      - 7003:8080
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-    depends_on:
-      zephyrus.notification.database:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-
-  zephyrus.gateway:
-    build:
-      context: .
-      dockerfile: Zephyrus.Gateway/Zephyrus.Gateway.WebApi/Dockerfile
-    container_name: zephyrus.gateway
-    ports:
-      - 7001:8080
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-    depends_on:
-      - zephyrus.identity
-      - zephyrus.catalog
-      - zephyrus.supplier
-      - zephyrus.procurement
-      - zephyrus.notification
-
-  zephyrus.ui:
-    build:
-      context: ../../Zephyrus.UI
-      dockerfile: Dockerfile
-    container_name: zephyrus.ui
-    ports:
-      - 3000:80
-    depends_on:
-      - zephyrus.gateway
+#  zephyrus.ui:
+#    build:
+#      context: ../../Zephyrus.UI
+#      dockerfile: Dockerfile
+#    container_name: zephyrus.ui
+#    ports:
+#      - 3000:80
+#    depends_on:
+#      - zephyrus.gateway
 
 volumes:
   zephyrus.identity.database.data:
