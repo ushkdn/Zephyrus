@@ -6,4 +6,5 @@ public class AuthSettings
 
     public int PasswordResetCodeExpirationMinutes { get; set; } = 5;
 
+    public int RefreshTokenExpirationDays { get; set; } = 15;
 }

@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Zephyrus.Identity.Application.Interfaces;
+using Zephyrus.Identity.Application.Settings;
 using Zephyrus.Identity.Domain.Entities;
 using Zephyrus.SharedKernel.Common;
 
@@ -11,6 +12,7 @@ public class SignInCommandHandler(
     IRefreshTokenRepository refreshTokenRepository,
     IPasswordHasher passwordHasher,
     IJwtService jwtService,
+    AuthSettings authSettings,
     ILogger<SignInCommandHandler> logger)
     : IRequestHandler<SignInCommandRequest, HandlerResponse<SignInCommandResponse>>
 {
@@ -38,7 +40,7 @@ public class SignInCommandHandler(
             Id = Guid.NewGuid(),
             UserId = storedUser.Id,
             Token = rawRefreshToken,
-            DateExpires = DateTime.UtcNow.AddDays(15),
+            DateExpires = DateTime.UtcNow.AddDays(authSettings.RefreshTokenExpirationDays),
             DateCreated = DateTime.UtcNow,
             DateUpdated = DateTime.UtcNow
         };

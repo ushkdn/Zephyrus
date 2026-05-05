@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddApplicationLayer();
+        services.AddApplicationLayer(configuration);
         services.AddInfrastructureLayer(configuration);
         services.AddPresentationLayer();
         services.AddWebApiLayer(configuration);

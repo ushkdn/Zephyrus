@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Zephyrus.Identity.Application.Interfaces;
+using Zephyrus.Identity.Application.Settings;
 using Zephyrus.SharedKernel.Common;
 
 namespace Zephyrus.Identity.Application.Features.Auth.Commands.RefreshToken;
@@ -9,6 +10,7 @@ public class RefreshTokenCommandHandler(
     IUserRepository userRepository,
     IRefreshTokenRepository refreshTokenRepository,
     IJwtService jwtService,
+    AuthSettings authSettings,
     ILogger<RefreshTokenCommandHandler> logger)
     : IRequestHandler<RefreshTokenCommandRequest, HandlerResponse<RefreshTokenCommandResponse>>
 {
@@ -45,7 +47,7 @@ public class RefreshTokenCommandHandler(
         var newRawRefreshToken = jwtService.GenerateRefreshToken();
 
         storedRefreshToken.Token = newRawRefreshToken;
-        storedRefreshToken.DateExpires = DateTime.UtcNow.AddDays(15);
+        storedRefreshToken.DateExpires = DateTime.UtcNow.AddDays(authSettings.RefreshTokenExpirationDays);
         storedRefreshToken.DateUpdated = DateTime.UtcNow;
 
         await refreshTokenRepository.UpdateAsync(storedRefreshToken, cancellationToken);

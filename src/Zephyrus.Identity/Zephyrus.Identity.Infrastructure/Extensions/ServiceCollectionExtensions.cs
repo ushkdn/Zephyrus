@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 using Zephyrus.Identity.Application.Interfaces;
 using Zephyrus.Identity.Infrastructure.Persistence;
 using Zephyrus.Identity.Infrastructure.Persistence.Repositories;
@@ -17,14 +18,21 @@ public static class ServiceCollectionExtensions
         var identityDatabaseConnectionString = configuration.GetConnectionString("IdentityDatabase")
             ?? throw new InvalidOperationException("Connection string 'IdentityDatabase' is not configured.");
 
+        var redisConnectionString = configuration.GetConnectionString("Redis")
+            ?? throw new InvalidOperationException("Connection string 'Redis' is not configured.");
+
         var jwtSettings = configuration.GetSectionOrThrow<JwtSettings>(JwtSettings.SectionName);
+        var emailSettings = configuration.GetSectionOrThrow<EmailSettings>(EmailSettings.SectionName);
 
         services.AddScoped<IDbConnectionFactory>(_ => new DbConnectionFactory(identityDatabaseConnectionString));
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IJwtService>(_ => new JwtService(jwtSettings));
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IEmailService>(_ => new EmailService(emailSettings));
 
+        var multiplexer = ConnectionMultiplexer.Connect(redisConnectionString);
+        services.AddSingleton<IConnectionMultiplexer>(multiplexer);
         services.AddSingleton<ICacheService, RedisCacheService>();
 
         return services;
