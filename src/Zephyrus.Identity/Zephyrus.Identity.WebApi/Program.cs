@@ -24,8 +24,9 @@ public class Program
             SerilogFactory.CreateLogger(builder.Services, builder.Configuration);
             builder.Host.UseSerilog();
 
+            Log.Information("Loading environment variables...");
             builder.LoadEnvironment("IDENTITY");
-            var conf = builder.Configuration;
+
             builder.Services.AddOpenApi();
             builder.Services.AddLayers(builder.Configuration);
 

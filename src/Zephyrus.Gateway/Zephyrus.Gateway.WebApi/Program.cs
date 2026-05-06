@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
 using Zephyrus.Logger;
+using Zephyrus.SharedKernel.Common.Extensions;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -13,6 +14,9 @@ try
     Log.Information("Starting Zephyrus.Gateway...");
 
     var builder = WebApplication.CreateBuilder(args);
+
+    Log.Information("Loading environment variables...");
+    builder.LoadEnvironment("GATEWAY");
 
     SerilogFactory.CreateLogger(builder.Services, builder.Configuration);
     builder.Host.UseSerilog();

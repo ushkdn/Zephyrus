@@ -4,6 +4,7 @@ using Zephyrus.Procurement.Infrastructure;
 using Zephyrus.Procurement.WebApi.Extensions;
 using Zephyrus.Procurement.WebApi.Middleware;
 using Zephyrus.SharedKernel.Common.Database;
+using Zephyrus.SharedKernel.Common.Extensions;
 
 namespace Zephyrus.Procurement.WebApi;
 
@@ -20,6 +21,9 @@ public class Program
             Log.Information("Starting Zephyrus.Procurement...");
 
             var builder = WebApplication.CreateBuilder(args);
+
+            Log.Information("Loading environment variables...");
+            builder.LoadEnvironment("PROCUREMENT");
 
             SerilogFactory.CreateLogger(builder.Services, builder.Configuration);
             builder.Host.UseSerilog();

@@ -9,11 +9,18 @@ public static class EnvironmentExtensions
     public static IHostApplicationBuilder LoadEnvironment(this IHostApplicationBuilder builder, string serviceName)
     {
         var envFileName = $".env.{builder.Environment.EnvironmentName.ToLowerInvariant()}";
+        var envSharedFileName = $".env.shared.{builder.Environment.EnvironmentName.ToLowerInvariant()}";
+
         var envFilePath = FindEnvFile(envFileName);
+        var envSharedFilePath = FindEnvFile(envSharedFileName);
 
         if (envFilePath is not null)
             Env.Load(envFilePath);
 
+        if (envSharedFilePath is not null)
+            Env.Load(envSharedFilePath);
+
+        builder.Configuration.AddEnvironmentVariables();
         builder.Configuration.AddEnvironmentVariables($"{serviceName.ToUpperInvariant()}_");
 
         return builder;

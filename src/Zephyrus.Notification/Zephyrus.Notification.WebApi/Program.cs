@@ -4,6 +4,7 @@ using Zephyrus.Notification.WebApi.Extensions;
 using Zephyrus.Notification.WebApi.Middleware;
 using Zephyrus.Logger;
 using Zephyrus.SharedKernel.Common.Database;
+using Zephyrus.SharedKernel.Common.Extensions;
 
 namespace Zephyrus.Notification.WebApi;
 
@@ -20,6 +21,9 @@ public class Program
             Log.Information("Starting Zephyrus.Notification...");
 
             var builder = WebApplication.CreateBuilder(args);
+
+            Log.Information("Loading environment variables...");
+            builder.LoadEnvironment("NOTIFICATION");
 
             SerilogFactory.CreateLogger(builder.Services, builder.Configuration);
             builder.Host.UseSerilog();

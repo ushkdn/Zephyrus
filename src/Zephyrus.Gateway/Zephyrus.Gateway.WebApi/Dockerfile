@@ -8,6 +8,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 COPY ["Zephyrus.Logger/Zephyrus.Logger.csproj", "Zephyrus.Logger/"]
+COPY ["Zephyrus.SharedKernel/Zephyrus.SharedKernel.csproj", "Zephyrus.SharedKernel/"]
 COPY ["Zephyrus.Gateway/Zephyrus.Gateway.WebApi/Zephyrus.Gateway.WebApi.csproj", "Zephyrus.Gateway/Zephyrus.Gateway.WebApi/"]
 
 RUN dotnet restore "Zephyrus.Gateway/Zephyrus.Gateway.WebApi/Zephyrus.Gateway.WebApi.csproj"

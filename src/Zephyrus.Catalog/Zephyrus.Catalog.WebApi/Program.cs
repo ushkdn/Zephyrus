@@ -4,6 +4,7 @@ using Zephyrus.Catalog.WebApi.Extensions;
 using Zephyrus.Catalog.WebApi.Middleware;
 using Zephyrus.Logger;
 using Zephyrus.SharedKernel.Common.Database;
+using Zephyrus.SharedKernel.Common.Extensions;
 
 namespace Zephyrus.Catalog.WebApi;
 
@@ -20,6 +21,9 @@ public class Program
             Log.Information("Starting Zephyrus.Catalog...");
 
             var builder = WebApplication.CreateBuilder(args);
+
+            Log.Information("Loading environment variables...");
+            builder.LoadEnvironment("CATALOG");
 
             SerilogFactory.CreateLogger(builder.Services, builder.Configuration);
             builder.Host.UseSerilog();
