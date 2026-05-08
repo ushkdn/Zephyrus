@@ -12,12 +12,7 @@ public class OrderRepository(IDbConnectionFactory dbConnectionFactory) : IOrderR
             $"""
             SELECT
                 id,
-                purchase_request_id AS PurchaseRequestId,
                 supplier_id AS SupplierId,
-                product_id AS ProductId,
-                quantity,
-                unit_price AS UnitPrice,
-                currency,
                 total_price AS TotalPrice,
                 status,
                 created_by AS CreatedBy,
@@ -39,12 +34,7 @@ public class OrderRepository(IDbConnectionFactory dbConnectionFactory) : IOrderR
             $"""
             SELECT
                 id,
-                purchase_request_id AS PurchaseRequestId,
                 supplier_id AS SupplierId,
-                product_id AS ProductId,
-                quantity,
-                unit_price AS UnitPrice,
-                currency,
                 total_price AS TotalPrice,
                 status,
                 created_by AS CreatedBy,
@@ -64,7 +54,7 @@ public class OrderRepository(IDbConnectionFactory dbConnectionFactory) : IOrderR
     {
         const string query =
             $"""
-            SELECT COUNT(1) FROM {TableNames.Orders}
+            SELECT COUNT(1) FROM {TableNames.OrderItems}
             WHERE purchase_request_id = @PurchaseRequestId
             """;
 
@@ -74,17 +64,79 @@ public class OrderRepository(IDbConnectionFactory dbConnectionFactory) : IOrderR
         return await connection.ExecuteScalarAsync<bool>(command);
     }
 
+    public async Task<IEnumerable<OrderItemEntity>> GetItemsByOrderIdAsync(Guid orderId, CancellationToken cancellationToken)
+    {
+        const string query =
+            $"""
+            SELECT
+                id,
+                order_id AS OrderId,
+                purchase_request_id AS PurchaseRequestId,
+                unit_price AS UnitPrice,
+                currency,
+                total_price AS TotalPrice,
+                date_created AS DateCreated,
+                date_updated AS DateUpdated
+            FROM {TableNames.OrderItems}
+            WHERE order_id = @OrderId
+            """;
+
+        var command = new CommandDefinition(query, new { OrderId = orderId }, cancellationToken: cancellationToken);
+
+        await using var connection = dbConnectionFactory.CreateConnection();
+        return await connection.QueryAsync<OrderItemEntity>(command);
+    }
+
+    public async Task<IEnumerable<OrderItemEntity>> GetItemsByOrderIdsAsync(IEnumerable<Guid> orderIds, CancellationToken cancellationToken)
+    {
+        const string query =
+            $"""
+            SELECT
+                id,
+                order_id AS OrderId,
+                purchase_request_id AS PurchaseRequestId,
+                unit_price AS UnitPrice,
+                currency,
+                total_price AS TotalPrice,
+                date_created AS DateCreated,
+                date_updated AS DateUpdated
+            FROM {TableNames.OrderItems}
+            WHERE order_id = ANY(@OrderIds)
+            """;
+
+        var command = new CommandDefinition(query, new { OrderIds = orderIds.ToArray() }, cancellationToken: cancellationToken);
+
+        await using var connection = dbConnectionFactory.CreateConnection();
+        return await connection.QueryAsync<OrderItemEntity>(command);
+    }
+
     public async Task AddAsync(OrderEntity order, CancellationToken cancellationToken)
     {
         const string query =
             $"""
             INSERT INTO {TableNames.Orders}
-                (id, purchase_request_id, supplier_id, product_id, quantity, unit_price, currency, total_price, status, created_by, date_created, date_updated)
+                (id, supplier_id, total_price, status, created_by, date_created, date_updated)
             VALUES
-                (@Id, @PurchaseRequestId, @SupplierId, @ProductId, @Quantity, @UnitPrice, @Currency, @TotalPrice, @Status, @CreatedBy, @DateCreated, @DateUpdated)
+                (@Id, @SupplierId, @TotalPrice, @Status, @CreatedBy, @DateCreated, @DateUpdated)
             """;
 
         var command = new CommandDefinition(query, order, cancellationToken: cancellationToken);
+
+        await using var connection = dbConnectionFactory.CreateConnection();
+        await connection.ExecuteAsync(command);
+    }
+
+    public async Task AddOrderItemAsync(OrderItemEntity item, CancellationToken cancellationToken)
+    {
+        const string query =
+            $"""
+            INSERT INTO {TableNames.OrderItems}
+                (id, order_id, purchase_request_id, unit_price, currency, total_price, date_created, date_updated)
+            VALUES
+                (@Id, @OrderId, @PurchaseRequestId, @UnitPrice, @Currency, @TotalPrice, @DateCreated, @DateUpdated)
+            """;
+
+        var command = new CommandDefinition(query, item, cancellationToken: cancellationToken);
 
         await using var connection = dbConnectionFactory.CreateConnection();
         await connection.ExecuteAsync(command);

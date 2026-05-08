@@ -50,7 +50,7 @@ public class OrdersController(ISender sender, ILogger<OrdersController> logger) 
             return BadRequest(result);
         }
 
-        logger.LogInformation("User {UserId} created order for purchase request {PurchaseRequestId}", userId, request.PurchaseRequestId);
+        logger.LogInformation("User {UserId} created order with {ItemCount} purchase requests", userId, request.Items.Count());
         return Ok(result);
     }
 

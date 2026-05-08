@@ -9,10 +9,40 @@ public class GetAllOrdersQueryHandler(IOrderRepository orderRepository)
 {
     public async Task<HandlerResponse<IEnumerable<GetAllOrdersQueryResponse>>> Handle(GetAllOrdersQueryRequest request, CancellationToken cancellationToken)
     {
-        var orders = await orderRepository.GetAllAsync(cancellationToken);
+        var orders = (await orderRepository.GetAllAsync(cancellationToken)).ToList();
 
-        var response = orders.Select(o =>
-            new GetAllOrdersQueryResponse(o.Id, o.PurchaseRequestId, o.SupplierId, o.ProductId, o.Quantity, o.UnitPrice, o.Currency, o.TotalPrice, o.Status.ToString(), o.DateCreated));
+        if (orders.Count == 0)
+            return new HandlerResponse<IEnumerable<GetAllOrdersQueryResponse>>([], null, true);
+
+        var orderIds = orders.Select(o => o.Id);
+        var allItems = await orderRepository.GetItemsByOrderIdsAsync(orderIds, cancellationToken);
+
+        var itemsByOrderId = new Dictionary<Guid, List<OrderItemQueryResponse>>();
+
+        foreach (var item in allItems)
+        {
+            var itemResponse = new OrderItemQueryResponse(item.PurchaseRequestId, item.UnitPrice, item.Currency, item.TotalPrice);
+
+            if (!itemsByOrderId.ContainsKey(item.OrderId))
+                itemsByOrderId[item.OrderId] = [];
+
+            itemsByOrderId[item.OrderId].Add(itemResponse);
+        }
+
+        var response = new List<GetAllOrdersQueryResponse>();
+
+        foreach (var order in orders)
+        {
+            itemsByOrderId.TryGetValue(order.Id, out var items);
+
+            response.Add(new GetAllOrdersQueryResponse(
+                order.Id,
+                order.SupplierId,
+                order.TotalPrice,
+                order.Status.ToString(),
+                order.DateCreated,
+                items ?? []));
+        }
 
         return new HandlerResponse<IEnumerable<GetAllOrdersQueryResponse>>(response, null, true);
     }

@@ -20,8 +20,12 @@ public class GetOrderByIdQueryHandler(
             return new HandlerResponse<GetOrderByIdQueryResponse>(null, $"Order with id: {request.Id} not found.", false);
         }
 
+        var orderItems = await orderRepository.GetItemsByOrderIdAsync(order.Id, cancellationToken);
+
+        var items = orderItems.Select(i => new OrderItemQueryResponse(i.PurchaseRequestId, i.UnitPrice, i.Currency, i.TotalPrice));
+
         return new HandlerResponse<GetOrderByIdQueryResponse>(
-            new GetOrderByIdQueryResponse(order.Id, order.PurchaseRequestId, order.SupplierId, order.ProductId, order.Quantity, order.UnitPrice, order.Currency, order.TotalPrice, order.Status.ToString(), order.CreatedBy, order.DateCreated, order.DateUpdated),
+            new GetOrderByIdQueryResponse(order.Id, order.SupplierId, order.TotalPrice, order.Status.ToString(), order.CreatedBy, order.DateCreated, order.DateUpdated, items),
             null,
             true);
     }

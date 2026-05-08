@@ -10,7 +10,7 @@ public class OrderItemEntity
 
     public decimal UnitPrice { get; set; }
 
-    public string Currency {get; set; } = string.Empty;
+    public string Currency { get; set; } = string.Empty;
 
     public decimal TotalPrice { get; set; }
 
