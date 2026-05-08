@@ -21,7 +21,7 @@ public class GetPurchaseRequestByIdQueryHandler(
         }
 
         return new HandlerResponse<GetPurchaseRequestByIdQueryResponse>(
-            new GetPurchaseRequestByIdQueryResponse(pr.Id, pr.ProductId, pr.Quantity, pr.Unit, pr.RequestedBy, pr.Status.ToString(), pr.Comment, pr.DateCreated, pr.DateUpdated),
+            new GetPurchaseRequestByIdQueryResponse(pr.Id, pr.ProductId, pr.Quantity, pr.RequestedBy, pr.Status.ToString(), pr.Comment, pr.DateCreated, pr.DateUpdated),
             null,
             true);
     }

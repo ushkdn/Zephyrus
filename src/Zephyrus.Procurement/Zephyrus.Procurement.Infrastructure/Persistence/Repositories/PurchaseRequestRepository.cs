@@ -14,7 +14,6 @@ public class PurchaseRequestRepository(IDbConnectionFactory dbConnectionFactory)
                 id,
                 product_id AS ProductId,
                 quantity,
-                unit,
                 requested_by AS RequestedBy,
                 status,
                 comment,
@@ -38,7 +37,6 @@ public class PurchaseRequestRepository(IDbConnectionFactory dbConnectionFactory)
                 id,
                 product_id AS ProductId,
                 quantity,
-                unit,
                 requested_by AS RequestedBy,
                 status,
                 comment,
@@ -59,9 +57,9 @@ public class PurchaseRequestRepository(IDbConnectionFactory dbConnectionFactory)
         const string query =
             $"""
             INSERT INTO {TableNames.PurchaseRequests}
-                (id, product_id, quantity, unit, requested_by, status, comment, date_created, date_updated)
+                (id, product_id, quantity, requested_by, status, comment, date_created, date_updated)
             VALUES
-                (@Id, @ProductId, @Quantity, @Unit, @RequestedBy, @Status, @Comment, @DateCreated, @DateUpdated)
+                (@Id, @ProductId, @Quantity, @RequestedBy, @Status, @Comment, @DateCreated, @DateUpdated)
             """;
 
         var command = new CommandDefinition(query, purchaseRequest, cancellationToken: cancellationToken);

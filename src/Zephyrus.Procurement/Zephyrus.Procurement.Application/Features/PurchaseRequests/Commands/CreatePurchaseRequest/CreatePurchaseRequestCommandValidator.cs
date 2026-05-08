@@ -12,10 +12,6 @@ public class CreatePurchaseRequestCommandValidator : AbstractValidator<CreatePur
         RuleFor(x => x.Quantity)
             .GreaterThan(0).WithMessage("Quantity must be greater than 0.");
 
-        RuleFor(x => x.Unit)
-            .NotEmpty().WithMessage("Unit is required.")
-            .MaximumLength(20).WithMessage("Unit must not exceed 20 characters.");
-
         RuleFor(x => x.RequestedBy)
             .NotEmpty().WithMessage("RequestedBy is required.");
     }

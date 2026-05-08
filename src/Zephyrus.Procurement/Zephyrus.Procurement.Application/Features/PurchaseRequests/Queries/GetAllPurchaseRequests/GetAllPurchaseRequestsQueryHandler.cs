@@ -12,7 +12,7 @@ public class GetAllPurchaseRequestsQueryHandler(IPurchaseRequestRepository purch
         var purchaseRequests = await purchaseRequestRepository.GetAllAsync(cancellationToken);
 
         var response = purchaseRequests.Select(pr =>
-            new GetAllPurchaseRequestsQueryResponse(pr.Id, pr.ProductId, pr.Quantity, pr.Unit, pr.RequestedBy, pr.Status.ToString(), pr.Comment, pr.DateCreated));
+            new GetAllPurchaseRequestsQueryResponse(pr.Id, pr.ProductId, pr.Quantity, pr.RequestedBy, pr.Status.ToString(), pr.Comment, pr.DateCreated));
 
         return new HandlerResponse<IEnumerable<GetAllPurchaseRequestsQueryResponse>>(response, null, true);
     }

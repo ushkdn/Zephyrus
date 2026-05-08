@@ -4,5 +4,5 @@ public record PurchaseRequestCreatedEvent(
     Guid PurchaseRequestId,
     Guid ProductId,
     decimal Quantity,
-    string Unit,
-    Guid RequestedBy);
+    Guid RequestedBy
+    );

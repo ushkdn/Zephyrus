@@ -10,8 +10,6 @@ public class PurchaseRequestEntity
 
     public decimal Quantity { get; set; }
 
-    public string Unit { get; set; } = string.Empty;
-
     public Guid RequestedBy { get; set; }
 
     public PurchaseRequestStatus Status { get; set; }

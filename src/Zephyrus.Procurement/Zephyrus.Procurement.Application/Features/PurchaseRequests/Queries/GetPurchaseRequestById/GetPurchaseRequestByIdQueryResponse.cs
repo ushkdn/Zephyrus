@@ -4,7 +4,6 @@ public record GetPurchaseRequestByIdQueryResponse(
     Guid Id,
     Guid ProductId,
     decimal Quantity,
-    string Unit,
     Guid RequestedBy,
     string Status,
     string? Comment,

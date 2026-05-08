@@ -3,7 +3,6 @@ CREATE TABLE IF NOT EXISTS purchase_requests
     id           UUID           PRIMARY KEY,
     product_id   UUID           NOT NULL,
     quantity     NUMERIC(18, 3) NOT NULL,
-    unit         VARCHAR(20)    NOT NULL,
     requested_by UUID           NOT NULL,
     status       SMALLINT       NOT NULL DEFAULT 1,
     comment      TEXT,

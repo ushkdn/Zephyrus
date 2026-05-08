@@ -29,7 +29,6 @@ public class CreatePurchaseRequestCommandHandler(
             Id = Guid.NewGuid(),
             ProductId = request.ProductId,
             Quantity = request.Quantity,
-            Unit = request.Unit.Trim(),
             RequestedBy = request.RequestedBy,
             Status = PurchaseRequestStatus.Pending,
             DateCreated = DateTime.UtcNow,
@@ -42,13 +41,12 @@ public class CreatePurchaseRequestCommandHandler(
             purchaseRequest.Id,
             purchaseRequest.ProductId,
             purchaseRequest.Quantity,
-            purchaseRequest.Unit,
             purchaseRequest.RequestedBy), cancellationToken);
 
         logger.LogInformation("Purchase request {RequestId} created by user {UserId} for product {ProductId}", purchaseRequest.Id, purchaseRequest.RequestedBy, purchaseRequest.ProductId);
 
         return new HandlerResponse<CreatePurchaseRequestCommandResponse>(
-            new CreatePurchaseRequestCommandResponse(purchaseRequest.Id, purchaseRequest.ProductId, purchaseRequest.Quantity, purchaseRequest.Unit, purchaseRequest.Status.ToString()),
+            new CreatePurchaseRequestCommandResponse(purchaseRequest.Id, purchaseRequest.ProductId, purchaseRequest.Quantity, purchaseRequest.Status.ToString()),
             $"Purchase request created successfully with id: {purchaseRequest.Id}",
             true);
     }

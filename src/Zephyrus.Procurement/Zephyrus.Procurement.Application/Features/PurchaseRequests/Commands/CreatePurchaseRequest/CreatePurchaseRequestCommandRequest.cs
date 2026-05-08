@@ -6,5 +6,5 @@ namespace Zephyrus.Procurement.Application.Features.PurchaseRequests.Commands.Cr
 public record CreatePurchaseRequestCommandRequest(
     Guid ProductId,
     decimal Quantity,
-    string Unit,
-    Guid RequestedBy) : IRequest<HandlerResponse<CreatePurchaseRequestCommandResponse>>;
+    Guid RequestedBy
+    ) : IRequest<HandlerResponse<CreatePurchaseRequestCommandResponse>>;
