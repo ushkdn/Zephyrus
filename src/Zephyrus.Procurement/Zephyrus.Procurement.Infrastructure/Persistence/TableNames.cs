@@ -4,4 +4,5 @@ public static class TableNames
 {
     public const string PurchaseRequests = "purchase_requests";
     public const string Orders = "orders";
+    public const string OrderItems = "order_items";
 }
