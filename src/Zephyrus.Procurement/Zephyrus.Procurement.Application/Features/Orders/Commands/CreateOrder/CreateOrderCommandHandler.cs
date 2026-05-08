@@ -59,7 +59,7 @@ public class CreateOrderCommandHandler(
                 OrderId = Guid.Empty,
                 PurchaseRequestId = pr.Id,
                 UnitPrice = itemRequests[i].UnitPrice,
-                Currency = itemRequests[i].Currency.Trim().ToUpper(),
+                Currency = Enum.Parse<Currency>(itemRequests[i].Currency.Trim(), ignoreCase: true),
                 TotalPrice = pr.Quantity * itemRequests[i].UnitPrice,
                 DateCreated = now,
                 DateUpdated = now
@@ -96,7 +96,7 @@ public class CreateOrderCommandHandler(
             order.Id, orderItems.Count, order.SupplierId);
 
         var itemResponses = orderItems
-            .Select(i => new OrderItemResponse(i.PurchaseRequestId, i.UnitPrice, i.Currency, i.TotalPrice));
+            .Select(i => new OrderItemResponse(i.PurchaseRequestId, i.UnitPrice, i.Currency.ToString(), i.TotalPrice));
 
         return new HandlerResponse<CreateOrderCommandResponse>(
             new CreateOrderCommandResponse(order.Id, order.SupplierId, itemResponses, order.TotalPrice, order.Status.ToString()),

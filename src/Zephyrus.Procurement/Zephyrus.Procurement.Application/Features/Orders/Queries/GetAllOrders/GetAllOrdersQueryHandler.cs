@@ -21,7 +21,7 @@ public class GetAllOrdersQueryHandler(IOrderRepository orderRepository)
 
         foreach (var item in allItems)
         {
-            var itemResponse = new OrderItemQueryResponse(item.PurchaseRequestId, item.UnitPrice, item.Currency, item.TotalPrice);
+            var itemResponse = new OrderItemQueryResponse(item.PurchaseRequestId, item.UnitPrice, item.Currency.ToString(), item.TotalPrice);
 
             if (!itemsByOrderId.ContainsKey(item.OrderId))
                 itemsByOrderId[item.OrderId] = [];

@@ -136,7 +136,18 @@ public class OrderRepository(IDbConnectionFactory dbConnectionFactory) : IOrderR
                 (@Id, @OrderId, @PurchaseRequestId, @UnitPrice, @Currency, @TotalPrice, @DateCreated, @DateUpdated)
             """;
 
-        var command = new CommandDefinition(query, item, cancellationToken: cancellationToken);
+        var param = new
+        {
+            item.Id,
+            item.OrderId,
+            item.PurchaseRequestId,
+            item.UnitPrice,
+            Currency = item.Currency.ToString(),
+            item.TotalPrice,
+            item.DateCreated,
+            item.DateUpdated
+        };
+        var command = new CommandDefinition(query, param, cancellationToken: cancellationToken);
 
         await using var connection = dbConnectionFactory.CreateConnection();
         await connection.ExecuteAsync(command);

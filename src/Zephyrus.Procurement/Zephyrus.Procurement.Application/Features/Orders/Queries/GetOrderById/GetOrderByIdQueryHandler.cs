@@ -22,7 +22,7 @@ public class GetOrderByIdQueryHandler(
 
         var orderItems = await orderRepository.GetItemsByOrderIdAsync(order.Id, cancellationToken);
 
-        var items = orderItems.Select(i => new OrderItemQueryResponse(i.PurchaseRequestId, i.UnitPrice, i.Currency, i.TotalPrice));
+        var items = orderItems.Select(i => new OrderItemQueryResponse(i.PurchaseRequestId, i.UnitPrice, i.Currency.ToString(), i.TotalPrice));
 
         return new HandlerResponse<GetOrderByIdQueryResponse>(
             new GetOrderByIdQueryResponse(order.Id, order.SupplierId, order.TotalPrice, order.Status.ToString(), order.CreatedBy, order.DateCreated, order.DateUpdated, items),

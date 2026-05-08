@@ -1,4 +1,5 @@
 using FluentValidation;
+using Zephyrus.Procurement.Domain.Enums;
 
 namespace Zephyrus.Procurement.Application.Features.Orders.Commands.CreateOrder;
 
@@ -22,7 +23,8 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommandR
 
             item.RuleFor(x => x.Currency)
                 .NotEmpty().WithMessage("Currency is required.")
-                .MaximumLength(10).WithMessage("Currency must not exceed 10 characters.");
+                .Must(c => Enum.TryParse<Currency>(c, ignoreCase: true, out _))
+                .WithMessage($"Currency must be one of: {string.Join(", ", Enum.GetNames<Currency>())}.");
         });
     }
 }

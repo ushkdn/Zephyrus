@@ -1,3 +1,5 @@
+using Zephyrus.Procurement.Domain.Enums;
+
 namespace Zephyrus.Procurement.Domain.Entities;
 
 public class OrderItemEntity
@@ -10,7 +12,7 @@ public class OrderItemEntity
 
     public decimal UnitPrice { get; set; }
 
-    public string Currency { get; set; } = string.Empty;
+    public Currency Currency { get; set; }
 
     public decimal TotalPrice { get; set; }
 
