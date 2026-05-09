@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS purchase_requests
     product_id   UUID           NOT NULL,
     quantity     NUMERIC(18, 3) NOT NULL,
     requested_by UUID           NOT NULL,
-    status       SMALLINT       NOT NULL DEFAULT 1,
+    status       VARCHAR(9)     NOT NULL DEFAULT 'Pending',
     comment      TEXT,
     date_created TIMESTAMPTZ    NOT NULL,
     date_updated TIMESTAMPTZ    NOT NULL

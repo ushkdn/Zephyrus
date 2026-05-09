@@ -120,7 +120,17 @@ public class OrderRepository(IDbConnectionFactory dbConnectionFactory) : IOrderR
                 (@Id, @SupplierId, @TotalPrice, @Status, @CreatedBy, @DateCreated, @DateUpdated)
             """;
 
-        var command = new CommandDefinition(query, order, cancellationToken: cancellationToken);
+        var param = new
+        {
+            order.Id,
+            order.SupplierId,
+            order.TotalPrice,
+            Status = order.Status.ToString(),
+            order.CreatedBy,
+            order.DateCreated,
+            order.DateUpdated
+        };
+        var command = new CommandDefinition(query, param, cancellationToken: cancellationToken);
 
         await using var connection = dbConnectionFactory.CreateConnection();
         await connection.ExecuteAsync(command);
@@ -163,7 +173,14 @@ public class OrderRepository(IDbConnectionFactory dbConnectionFactory) : IOrderR
             WHERE id = @Id
             """;
 
-        var command = new CommandDefinition(query, order, cancellationToken: cancellationToken);
+        var param = new
+        {
+            Status = order.Status.ToString(),
+            order.DateUpdated,
+            order.Id
+        };
+
+        var command = new CommandDefinition(query, param, cancellationToken: cancellationToken);
 
         await using var connection = dbConnectionFactory.CreateConnection();
         await connection.ExecuteAsync(command);

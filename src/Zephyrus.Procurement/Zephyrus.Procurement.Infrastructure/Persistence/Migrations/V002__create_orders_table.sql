@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS orders
     id                   UUID           PRIMARY KEY,
     supplier_id          UUID           NOT NULL,
     total_price          NUMERIC(18, 2) NOT NULL,
-    status               SMALLINT       NOT NULL DEFAULT 1,
+    status               VARCHAR(9)     NOT NULL DEFAULT 'Created',
     created_by           UUID           NOT NULL,
     date_created         TIMESTAMPTZ    NOT NULL,
     date_updated         TIMESTAMPTZ    NOT NULL

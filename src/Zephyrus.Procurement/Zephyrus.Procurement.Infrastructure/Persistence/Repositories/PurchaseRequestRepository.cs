@@ -62,7 +62,19 @@ public class PurchaseRequestRepository(IDbConnectionFactory dbConnectionFactory)
                 (@Id, @ProductId, @Quantity, @RequestedBy, @Status, @Comment, @DateCreated, @DateUpdated)
             """;
 
-        var command = new CommandDefinition(query, purchaseRequest, cancellationToken: cancellationToken);
+        var param = new
+        {
+            purchaseRequest.Id,
+            purchaseRequest.ProductId,
+            purchaseRequest.Quantity,
+            purchaseRequest.RequestedBy,
+            Status = purchaseRequest.Status.ToString(),
+            purchaseRequest.Comment,
+            purchaseRequest.DateCreated,
+            purchaseRequest.DateUpdated
+        };
+
+        var command = new CommandDefinition(query, param, cancellationToken: cancellationToken);
 
         await using var connection = dbConnectionFactory.CreateConnection();
         await connection.ExecuteAsync(command);
@@ -79,7 +91,14 @@ public class PurchaseRequestRepository(IDbConnectionFactory dbConnectionFactory)
             WHERE id = @Id
             """;
 
-        var command = new CommandDefinition(query, purchaseRequest, cancellationToken: cancellationToken);
+        var param = new
+        {
+            Status = purchaseRequest.Status.ToString(),
+            purchaseRequest.Comment,
+            purchaseRequest.DateUpdated,
+            purchaseRequest.Id
+        };
+        var command = new CommandDefinition(query, param, cancellationToken: cancellationToken);
 
         await using var connection = dbConnectionFactory.CreateConnection();
         await connection.ExecuteAsync(command);
