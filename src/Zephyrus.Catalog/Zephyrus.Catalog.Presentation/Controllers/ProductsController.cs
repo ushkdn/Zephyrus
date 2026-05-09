@@ -37,6 +37,7 @@ public class ProductsController(ISender sender, ILogger<ProductsController> logg
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] CreateProductCommandRequest request, CancellationToken cancellationToken)
     {
         var result = await sender.Send(request, cancellationToken);
@@ -52,6 +53,7 @@ public class ProductsController(ISender sender, ILogger<ProductsController> logg
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductCommandRequest request, CancellationToken cancellationToken)
     {
         var result = await sender.Send(request with { Id = id }, cancellationToken);
@@ -67,6 +69,7 @@ public class ProductsController(ISender sender, ILogger<ProductsController> logg
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         var result = await sender.Send(new DeleteProductCommandRequest(id), cancellationToken);

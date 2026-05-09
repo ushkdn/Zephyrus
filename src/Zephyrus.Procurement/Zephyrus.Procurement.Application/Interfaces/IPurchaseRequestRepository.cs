@@ -8,6 +8,8 @@ public interface IPurchaseRequestRepository
 
     Task<IEnumerable<PurchaseRequestEntity>> GetAllAsync(CancellationToken cancellationToken);
 
+    Task<IEnumerable<PurchaseRequestEntity>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken);
+
     Task AddAsync(PurchaseRequestEntity purchaseRequest, CancellationToken cancellationToken);
 
     Task UpdateAsync(PurchaseRequestEntity purchaseRequest, CancellationToken cancellationToken);

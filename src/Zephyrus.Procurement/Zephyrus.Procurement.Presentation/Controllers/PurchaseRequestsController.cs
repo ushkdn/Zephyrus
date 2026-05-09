@@ -7,6 +7,7 @@ using Zephyrus.Procurement.Application.Features.PurchaseRequests.Commands.Approv
 using Zephyrus.Procurement.Application.Features.PurchaseRequests.Commands.CreatePurchaseRequest;
 using Zephyrus.Procurement.Application.Features.PurchaseRequests.Commands.RejectPurchaseRequest;
 using Zephyrus.Procurement.Application.Features.PurchaseRequests.Queries.GetAllPurchaseRequests;
+using Zephyrus.Procurement.Application.Features.PurchaseRequests.Queries.GetMyPurchaseRequests;
 using Zephyrus.Procurement.Application.Features.PurchaseRequests.Queries.GetPurchaseRequestById;
 
 namespace Zephyrus.Procurement.Presentation.Controllers;
@@ -24,6 +25,15 @@ public class PurchaseRequestsController(ISender sender, ILogger<PurchaseRequests
         return Ok(result);
     }
 
+    [HttpGet("my")]
+    [Authorize(Roles = "Buyer")]
+    public async Task<IActionResult> GetMy(CancellationToken cancellationToken)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var result = await sender.Send(new GetMyPurchaseRequestsQueryRequest(userId), cancellationToken);
+        return Ok(result);
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
@@ -35,10 +45,20 @@ public class PurchaseRequestsController(ISender sender, ILogger<PurchaseRequests
             return NotFound(result);
         }
 
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var role = User.FindFirstValue(ClaimTypes.Role);
+
+        if (role == "Buyer" && result.Data!.RequestedBy != userId)
+        {
+            logger.LogWarning("User {UserId} attempted to access purchase request {RequestId} belonging to another user", userId, id);
+            return Forbid();
+        }
+
         return Ok(result);
     }
 
     [HttpPost]
+    [Authorize(Roles = "Buyer")]
     public async Task<IActionResult> Create([FromBody] CreatePurchaseRequestCommandRequest request, CancellationToken cancellationToken)
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

@@ -18,8 +18,6 @@ public class ApprovePurchaseRequestCommandHandler(
     {
         var purchaseRequest = await purchaseRequestRepository.GetByIdAsync(request.Id, cancellationToken);
 
-        logger.LogInformation($"PURCHASE REQUEST STATUS BEFORE: {purchaseRequest.Status}");
-
         if (purchaseRequest is null)
         {
             logger.LogWarning("Purchase request {RequestId} not found", request.Id);

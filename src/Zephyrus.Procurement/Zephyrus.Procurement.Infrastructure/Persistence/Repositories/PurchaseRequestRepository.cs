@@ -52,6 +52,30 @@ public class PurchaseRequestRepository(IDbConnectionFactory dbConnectionFactory)
         return await connection.QueryAsync<PurchaseRequestEntity>(command);
     }
 
+    public async Task<IEnumerable<PurchaseRequestEntity>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        const string query =
+            $"""
+            SELECT
+                id,
+                product_id AS ProductId,
+                quantity,
+                requested_by AS RequestedBy,
+                status,
+                comment,
+                date_created AS DateCreated,
+                date_updated AS DateUpdated
+            FROM {TableNames.PurchaseRequests}
+            WHERE requested_by = @UserId
+            ORDER BY date_created DESC
+            """;
+
+        var command = new CommandDefinition(query, new { UserId = userId }, cancellationToken: cancellationToken);
+
+        await using var connection = dbConnectionFactory.CreateConnection();
+        return await connection.QueryAsync<PurchaseRequestEntity>(command);
+    }
+
     public async Task AddAsync(PurchaseRequestEntity purchaseRequest, CancellationToken cancellationToken)
     {
         const string query =

@@ -29,6 +29,7 @@ public class SupplierProductsController(ISender sender, ILogger<SupplierProducts
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Add(Guid supplierId, [FromBody] AddSupplierProductCommandRequest request, CancellationToken cancellationToken)
     {
         var result = await sender.Send(request with { SupplierId = supplierId }, cancellationToken);
@@ -44,6 +45,7 @@ public class SupplierProductsController(ISender sender, ILogger<SupplierProducts
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(Guid supplierId, Guid id, [FromBody] UpdateSupplierProductCommandRequest request, CancellationToken cancellationToken)
     {
         var result = await sender.Send(request with { Id = id, SupplierId = supplierId }, cancellationToken);
@@ -59,6 +61,7 @@ public class SupplierProductsController(ISender sender, ILogger<SupplierProducts
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Remove(Guid supplierId, Guid id, CancellationToken cancellationToken)
     {
         var result = await sender.Send(new RemoveSupplierProductCommandRequest(id, supplierId), cancellationToken);

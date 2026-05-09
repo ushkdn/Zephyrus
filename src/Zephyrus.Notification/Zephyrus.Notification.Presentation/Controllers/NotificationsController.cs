@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,12 @@ public class NotificationsController(ISender sender, ILogger<NotificationsContro
     [HttpGet("{recipientId:guid}")]
     public async Task<IActionResult> GetByRecipient(Guid recipientId, CancellationToken cancellationToken)
     {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var role = User.FindFirstValue(ClaimTypes.Role);
+
+        if (userId != recipientId && role != "Admin")
+            return Forbid();
+
         var result = await sender.Send(new GetNotificationsByRecipientQueryRequest(recipientId), cancellationToken);
         return Ok(result);
     }
